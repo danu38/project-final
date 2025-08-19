@@ -34,7 +34,7 @@ function FotumPage() {
     post.title.toLowerCase().includes(search.toLowerCase())
   );
 
-    // Handle opening and closing modal
+  // Handle opening and closing modal
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
@@ -50,8 +50,6 @@ function FotumPage() {
     }
   };
 
-
-
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       {/* Header Section */}
@@ -64,6 +62,7 @@ function FotumPage() {
         <Grid item xs={12} sm="auto">
           <Button
             variant="contained"
+            onClick={handleOpen}
             sx={{
               backgroundColor: "#0077B6",
               "&:hover": { backgroundColor: "#005f91" },
@@ -140,9 +139,42 @@ function FotumPage() {
         )}
       </Stack>
 
-
-
-      
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+        <DialogTitle>Create a New Post</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} mt={1}>
+            <TextField
+              label="Title"
+              fullWidth
+              value={newPost.title}
+              onChange={(e) =>
+                setNewPost({ ...newPost, title: e.target.value })
+              }
+            />
+            <TextField
+              label="Author"
+              fullWidth
+              value={newPost.author}
+              onChange={(e) =>
+                setNewPost({ ...newPost, author: e.target.value })
+              }
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button
+            onClick={handleAddPost}
+            variant="contained"
+            sx={{
+              backgroundColor: "#0077B6",
+              "&:hover": { backgroundColor: "#005f91" },
+            }}
+          >
+            Post
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }
