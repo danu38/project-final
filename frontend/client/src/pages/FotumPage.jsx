@@ -1,7 +1,26 @@
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+import { useState } from "react";
+import {
+  Box,
+  Typography,
+  Paper,
+  Stack,
+  Button,
+  Grid,
+  Container,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
 
 function FotumPage() {
-  const dummyPosts = [
+  const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false); // modal state
+  const [newPost, setNewPost] = useState({ title: "", author: "" });
+
+  const [posts, setPosts] = useState([
     { id: 1, title: "How do I fix this React bug?", author: "Alice" },
     { id: 2, title: "Best resources for learning Node.js?", author: "Bob" },
     {
@@ -9,23 +28,122 @@ function FotumPage() {
       title: "What’s the difference between useState and useReducer?",
       author: "Charlie",
     },
-  ];
+  ]);
+
+  const filteredPosts = posts.filter((post) =>
+    post.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+    // Handle opening and closing modal
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setOpen(false);
+    setNewPost({ title: "", author: "" }); // reset form
+  };
+
+  // Handle new post submission
+  const handleAddPost = () => {
+    if (newPost.title.trim() && newPost.author.trim()) {
+      const newId = posts.length + 1;
+      setPosts([...posts, { id: newId, ...newPost }]);
+      handleClose();
+    }
+  };
+
+
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Forum</h1>
-      <div className="space-y-4">
-        {dummyPosts.map((post) => (
-          <div key={post.id} className="p-4 border rounded-lg hover:shadow">
-            <h2 className="text-xl font-semibold">{post.title}</h2>
-            <p className="text-sm text-gray-500">Posted by {post.author}</p>
-            <Link to={`/post/${post.id}`} className="text-blue-600 text-sm">
-              View discussion →
-            </Link>
-          </div>
-        ))}
-      </div>
-    </div>
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      {/* Header Section */}
+      <Grid container justifyContent="space-between" alignItems="center" mb={4}>
+        <Grid item xs={12} sm="auto">
+          <Typography variant="h3" fontWeight="bold" gutterBottom>
+            Forum
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sm="auto">
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#0077B6",
+              "&:hover": { backgroundColor: "#005f91" },
+            }}
+          >
+            + New Post
+          </Button>
+        </Grid>
+      </Grid>
+
+      {/* Search Bar */}
+      <Box mb={4}>
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Search posts..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </Box>
+
+      {/* Posts List */}
+      <Stack spacing={3}>
+        {filteredPosts.length > 0 ? (
+          filteredPosts.map((post) => (
+            <Paper
+              key={post.id}
+              elevation={3}
+              sx={{ p: 3, borderRadius: 2, "&:hover": { boxShadow: 6 } }}
+            >
+              <Grid
+                container
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={12} sm={8}>
+                  <Typography variant="h6" fontWeight="medium">
+                    {post.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Posted by {post.author}
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sm={4}
+                  sx={{
+                    display: "flex",
+                    justifyContent: { xs: "flex-start", sm: "flex-end" },
+                    mt: { xs: 1, sm: 0 },
+                  }}
+                >
+                  <Button
+                    component={RouterLink}
+                    to={`/post/${post.id}`}
+                    variant="contained"
+                    size="small"
+                    sx={{
+                      backgroundColor: "#0077B6",
+                      "&:hover": { backgroundColor: "#005f91" },
+                    }}
+                  >
+                    View discussion →
+                  </Button>
+                </Grid>
+              </Grid>
+            </Paper>
+          ))
+        ) : (
+          <Typography variant="body1" color="text.secondary" align="center">
+            No posts found.
+          </Typography>
+        )}
+      </Stack>
+
+
+
+      
+    </Container>
   );
 }
 
