@@ -10,7 +10,7 @@ import {
   Stack,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import TechnigoLogo from "../assets/technigologo.png"; // Add your logo here
+import TechnigoLogo from "../assets/technigologo.png"; 
 
 function SignupPage() {
   const [email, setEmail] = useState("");
