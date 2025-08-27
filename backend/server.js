@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import authRoutes from "./routes/auth.js";
 import postRoutes from "./routes/posts.js";
-
+import commentRoutes from "./routes/commentRoutes.js";
 
 dotenv.config();
 
@@ -37,3 +37,4 @@ app.listen(port, () => {
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/comments", commentRoutes);
