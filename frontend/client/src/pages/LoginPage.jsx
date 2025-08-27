@@ -11,17 +11,36 @@ import {
   Grid,
   Stack,
 } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink,  useNavigate  } from "react-router-dom";
 import TechnigoLogo from "../assets/technigologo.png";
+import axios from "axios";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login with:", { email, password });
+    setError("");
+
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        email,
+        password,
+      });
+
+      // Save token in localStorage
+      localStorage.setItem("token", res.data.token);
+
+      // Redirect to forum
+      navigate("/");
+    } catch (err) {
+      setError(err.response?.data?.error || "Login failed. Try again.");
+    }
   };
+
 
   return (
     <Grid
@@ -73,6 +92,11 @@ function LoginPage() {
                   Forgot password?
                 </Link>
               </Box>
+              {error && (
+                <Typography color="error" align="center">
+                  {error}
+                </Typography>
+              )}
               <Button
                 type="submit"
                 variant="contained"

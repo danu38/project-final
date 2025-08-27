@@ -1,13 +1,29 @@
-# Final Project
+# Home for Technigo Coders
 
-Replace this readme with your own information about your project.
-
-Start by briefly describing the assignment in a sentence or two. Keep it short and to the point.
+This is my final project for Technigo – a community forum app where students can log in, ask coding questions, and help each other out.
 
 ## The problem
 
-Describe how you approached to problem, and what tools and techniques you used to solve it. How did you plan? What technologies did you use? If you had more time, what would be next?
+Technigo students often face challenges while learning to code and sometimes need quick support. To solve this, I created a simple forum app with authentication and discussion features.
+
+Approach & Tools:
+
+Planned with wireframes and user journeys in Figma
+
+Built the frontend with React, React Router, Zustand, and Material UI for styling
+
+Built the backend with Node.js, Express, and MongoDB (Mongoose)
+
+Implemented authentication with JWT + bcrypt
+
+Deployed both frontend and backend for real usage
+
+Add post categories/tags
+
+#Tech Stack
+
+Frontend: React, React Router, Zustand, Material UI, TailwindCSS
+Backend: Node.js, Express, MongoDB (Mongoose)
+Other: JWT, bcrypt, dotenv, Axios
 
 ## View it live
-
-Every project should be deployed somewhere. Be sure to include the link to the deployed project so that the viewer can click around and see what it's all about.

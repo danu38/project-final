@@ -9,18 +9,43 @@ import {
   Grid,
   Stack,
 } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
-import TechnigoLogo from "../assets/technigologo.png"; 
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import TechnigoLogo from "../assets/technigologo.png";
+import axios from "axios";
 
 function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Signup with:", { email, password });
+    setError("");
+    setSuccess("");
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/signup", {
+        email,
+        password,
+      });
+
+      setSuccess("Signup successful! Redirecting to login...");
+
+      // Redirect after short delay
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+    } catch (err) {
+      setError(err.response?.data?.error || "Signup failed. Try again.");
+    }
   };
 
   return (
@@ -74,6 +99,17 @@ function SignupPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
+              {error && (
+                <Typography color="error" align="center">
+                  {error}
+                </Typography>
+              )}
+              {success && (
+                <Typography color="primary" align="center">
+                  {success}
+                </Typography>
+              )}
+
               <Button
                 type="submit"
                 variant="contained"
