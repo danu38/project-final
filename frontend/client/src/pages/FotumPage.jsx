@@ -28,7 +28,7 @@ function FotumPage() {
   // Fetch posts on mount
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/posts")
+      .get("https://project-final-7wgo.onrender.com/api/posts")
       .then((res) => setPosts(res.data))
       .catch((err) => console.error(err));
   }, []);
@@ -51,7 +51,7 @@ function FotumPage() {
     }
     if (newPost.title.trim() && newPost.content.trim()) {
       axios
-        .post("http://localhost:5000/api/posts", newPost, {
+        .post("https://project-final-7wgo.onrender.com/api/posts", newPost, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {

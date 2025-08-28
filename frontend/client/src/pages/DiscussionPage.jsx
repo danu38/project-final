@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 
 
-
 function DiscussionPage() {
   const { id } = useParams(); // get post ID from URL
   const [post, setPost] = useState(null);
@@ -22,11 +21,11 @@ function DiscussionPage() {
 
  // Fetch post + comments on mount
   useEffect(() => {
-    fetch(`http://localhost:5000/api/posts/${id}`)
+    fetch(`https://project-final-7wgo.onrender.com/api/posts/${id}`)
       .then((res) => res.json())
       .then(setPost);
 
-    fetch(`http://localhost:5000/api/comments/${id}`)
+    fetch(`https://project-final-7wgo.onrender.com/api/comments/${id}`)
       .then((res) => res.json())
       .then(setComments);
   }, [id]);
@@ -35,7 +34,7 @@ function DiscussionPage() {
     if (!newComment.trim()) return;
 
     const token = localStorage.getItem("token"); // JWT from login
-    const res = await fetch(`http://localhost:5000/api/comments/${id}`, {
+    const res = await fetch(`https://project-final-7wgo.onrender.com/api/comments/${id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

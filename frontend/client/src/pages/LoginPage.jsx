@@ -26,7 +26,7 @@ function LoginPage() {
     setError("");
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await axios.post("https://project-final-7wgo.onrender.com/api/auth/login", {
         email,
         password,
       });
