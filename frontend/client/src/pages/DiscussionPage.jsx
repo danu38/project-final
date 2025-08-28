@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -10,49 +10,44 @@ import {
   Avatar,
 } from "@mui/material";
 
-// dummy post data
-const dummyPosts = [
-  {
-    id: 1,
-    title: "How do I fix this React bug?",
-    author: "Alice",
-    description:
-      "I'm getting an error when trying to update state inside useEffect.",
-  },
-  {
-    id: 2,
-    title: "Best resources for learning Node.js?",
-    author: "Bob",
-    description: "Looking for good beginner-friendly tutorials and guides.",
-  },
-  {
-    id: 3,
-    title: "What’s the difference between useState and useReducer?",
-    author: "Charlie",
-    description:
-      "I want to understand when to use one over the other in React.",
-  },
-];
+
 
 function DiscussionPage() {
   const { id } = useParams(); // get post ID from URL
-  const post = dummyPosts.find((p) => p.id === Number(id));
+  const [post, setPost] = useState(null);
 
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [image, setImage] = useState(null);
 
-  const handleAddComment = () => {
-    if (newComment.trim() || image) {
-      const newEntry = {
-        id: comments.length + 1,
-        text: newComment,
-        image: image,
-        author: "You",
-      };
-      setComments([...comments, newEntry]);
+ // Fetch post + comments on mount
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/posts/${id}`)
+      .then((res) => res.json())
+      .then(setPost);
+
+    fetch(`http://localhost:5000/api/comments/${id}`)
+      .then((res) => res.json())
+      .then(setComments);
+  }, [id]);
+
+   const handleAddComment = async () => {
+    if (!newComment.trim()) return;
+
+    const token = localStorage.getItem("token"); // JWT from login
+    const res = await fetch(`http://localhost:5000/api/comments/${id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ text: newComment }),
+    });
+
+    if (res.ok) {
+      const comment = await res.json();
+      setComments([comment, ...comments]);
       setNewComment("");
-      setImage(null);
     }
   };
 
@@ -62,10 +57,7 @@ function DiscussionPage() {
     }
   };
 
-  if (!post) {
-    return <Typography variant="h6">Post not found</Typography>;
-  }
-
+  if (!post) return <Typography>Loading...</Typography>;
   return (
     <Box maxWidth="md" mx="auto" p={3}>
       {/* Post details */}
@@ -74,10 +66,11 @@ function DiscussionPage() {
           {post.title}
         </Typography>
         <Typography variant="body2" color="text.secondary" gutterBottom>
-          Posted by {post.author}
+          Posted by {post.author?.email}
         </Typography>
-        <Typography variant="body1">{post.description}</Typography>
+        <Typography variant="body1">{post.content}</Typography>
       </Paper>
+
 
       {/* Comments section */}
       <Typography variant="h6" gutterBottom>
@@ -85,28 +78,24 @@ function DiscussionPage() {
       </Typography>
 
       <Stack spacing={2} mb={3}>
-        {comments.map((c) => (
-          <Paper key={c.id} sx={{ p: 2, borderRadius: 2 }}>
-            <Stack direction="row" spacing={2} alignItems="flex-start">
-              <Avatar>{c.author[0]}</Avatar>
-              <Box>
-                <Typography fontWeight="bold">{c.author}</Typography>
-                <Typography>{c.text}</Typography>
-                {c.image && (
-                  <Box mt={1}>
-                    <img
-                      src={c.image}
-                      alt="comment upload"
-                      style={{ maxWidth: "200px", borderRadius: "8px" }}
-                    />
-                  </Box>
-                )}
-              </Box>
-            </Stack>
-          </Paper>
-        ))}
+        {comments.length > 0 ? (
+          comments.map((c) => (
+            <Paper key={c._id} sx={{ p: 2, borderRadius: 2 }}>
+              <Stack direction="row" spacing={2} alignItems="flex-start">
+                <Avatar>{c.author?.email[0]}</Avatar>
+                <Box>
+                  <Typography fontWeight="bold">{c.author?.email}</Typography>
+                  <Typography>{c.text}</Typography>
+                </Box>
+              </Stack>
+            </Paper>
+          ))
+        ) : (
+          <Typography color="text.secondary">No comments yet.</Typography>
+        )}
       </Stack>
 
+      {/* Add new comment */}
       {/* Add new comment */}
       <Paper sx={{ p: 3, borderRadius: 2 }}>
         <Typography variant="subtitle1" gutterBottom>
@@ -121,20 +110,6 @@ function DiscussionPage() {
           onChange={(e) => setNewComment(e.target.value)}
           sx={{ mb: 2 }}
         />
-        <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-          <Button variant="outlined" component="label">
-            Upload Image
-            <input
-              hidden
-              accept="image/*"
-              type="file"
-              onChange={handleImageUpload}
-            />
-          </Button>
-          {image && (
-            <Typography color="text.secondary">Image ready ✔</Typography>
-          )}
-        </Stack>
         <Button
           variant="contained"
           sx={{
