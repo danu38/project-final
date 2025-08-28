@@ -32,17 +32,24 @@ function SignupPage() {
     }
 
     try {
-      const res = await axios.post("https://project-final-7wgo.onrender.com/api/auth/signup", {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        "https://project-final-7wgo.onrender.com/api/auth/signup",
+        {
+          email,
+          password,
+        }
+      );
 
-      setSuccess("Signup successful! Redirecting to login...");
-
-      // Redirect after short delay
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
+      // Save token immediately
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+        navigate("/forum"); // redirect directly to forum
+      } else {
+        setSuccess("Signup successful! Redirecting to login...");
+        setTimeout(() => {
+          navigate("/login");
+        }, 1500);
+      }
     } catch (err) {
       setError(err.response?.data?.error || "Signup failed. Try again.");
     }

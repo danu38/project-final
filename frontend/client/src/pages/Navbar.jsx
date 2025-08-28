@@ -1,8 +1,16 @@
 import { AppBar,Box, Toolbar, Typography, Button, Stack } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink,useNavigate } from "react-router-dom";
 import TechnigoLogo from "../assets/technigologo.png";
 
 function Navbar() {
+const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login"); // redirect to login
+  };
+
   return (
     <AppBar position="static" sx={{ backgroundColor: "#0077B6" }}>
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -27,6 +35,9 @@ function Navbar() {
 
         {/* Right side: Nav links */}
         <Stack direction="row" spacing={2}>
+{!token ? (
+            <>
+
           <Button
             component={RouterLink}
             to="/"
@@ -48,6 +59,13 @@ function Navbar() {
           >
             Signup
           </Button>
+ </>
+          ) : (
+            <Button color="inherit" onClick={handleLogout}>
+              Logout
+            </Button>
+          )}
+
         </Stack>
       </Toolbar>
     </AppBar>
