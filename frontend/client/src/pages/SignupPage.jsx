@@ -31,6 +31,17 @@ function SignupPage() {
       return;
     }
 
+    // Strong password regex
+    const strongPassword =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+
+    if (!strongPassword.test(password)) {
+      setError(
+        "Password must be at least 8 characters, include 1 letter, 1 number, and 1 special character."
+      );
+      return;
+    }
+
     try {
       const res = await axios.post(
         "https://project-final-7wgo.onrender.com/api/auth/signup",
